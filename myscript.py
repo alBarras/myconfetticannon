@@ -3,7 +3,7 @@ import RPi.GPIO as GPIO
 from time import sleep
 GPIO.setmode(GPIO.BCM)
 
-timeBetweenChecks = 5
+timeBetweenChecks = 1
 useLeds = True
 useServos = False
 

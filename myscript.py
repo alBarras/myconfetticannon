@@ -1,5 +1,6 @@
 print('Firebase Script Started!')
 import RPi.GPIO as GPIO
+from time import sleep
 GPIO.setmode(GPIO.BCM)
 
 timeBetweenChecks = 5

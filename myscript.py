@@ -64,7 +64,3 @@ try:
         GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
         p.ChangeDutyCycle(2.5)
         sleep(0.5)
-
-# except KeyboardInterrupt:
-#     p.stop()
-#     GPIO.cleanup()

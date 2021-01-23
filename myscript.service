@@ -3,7 +3,7 @@ Description=My service
 After=network.target
 
 [Service]
-ExecStart=/usr/bin/python /home/pi/myteleconfetticannon/myscript.py
+ExecStart=/usr/bin/python /home/pi/myconfetticannon/myscript.py
 StandardOutput=inherit
 StandardError=inherit
 Restart=always

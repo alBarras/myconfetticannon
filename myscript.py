@@ -38,29 +38,36 @@ GPIO.setup(servoPIN, GPIO.OUT)
 p = GPIO.PWM(servoPIN, 50) # GPIO 17 for PWM with 50Hz
 p.start(2.5) # Initialization
 
-try:
-    while True:
-        GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
-        p.ChangeDutyCycle(5)
-        sleep(0.5)
-        GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
-        p.ChangeDutyCycle(7.5)
-        sleep(0.5)
-        GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
-        p.ChangeDutyCycle(10)
-        sleep(0.5)
-        GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
-        p.ChangeDutyCycle(12.5)
-        sleep(0.5)
-        GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
-        p.ChangeDutyCycle(10)
-        sleep(0.5)
-        GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
-        p.ChangeDutyCycle(7.5)
-        sleep(0.5)
-        GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
-        p.ChangeDutyCycle(5)
-        sleep(0.5)
-        GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
-        p.ChangeDutyCycle(2.5)
-        sleep(0.5)
+while True:
+    GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
+    p.ChangeDutyCycle(5)
+    sleep(0.5)
+    GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
+    p.ChangeDutyCycle(7.5)
+    sleep(0.5)
+    GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
+    p.ChangeDutyCycle(10)
+    sleep(0.5)
+    GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
+    p.ChangeDutyCycle(12.5)
+    sleep(0.5)
+    GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
+    p.ChangeDutyCycle(10)
+    sleep(0.5)
+    GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
+    p.ChangeDutyCycle(7.5)
+    sleep(0.5)
+    GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
+    p.ChangeDutyCycle(5)
+    sleep(0.5)
+    GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
+    p.ChangeDutyCycle(2.5)
+    sleep(0.5)
+
+
+
+# try:
+#   ...
+# except KeyboardInterrupt:
+#     p.stop()
+#     GPIO.cleanup()

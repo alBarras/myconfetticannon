@@ -74,7 +74,7 @@ def main():
     while True:
         print('\n--- NEW FIREBASE READING ---')
         openLectureLed(True)
-        ref = db.reference(fb_url+fb_dir+'justshoot/')
+        ref = db.reference('teleconfetticannon-default-rtdb'+fb_dir+'justshoot')
         print(ref.get())
         sleep(2)
         openLectureLed(False)

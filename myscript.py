@@ -1,93 +1,108 @@
 print('TeleConfettiCannon Script Started!')
 from time import sleep
-
-# timeBetweenChecks = 3
-# useLeds = True
-# useServos = True
-#
-# LEDlecture_GPIOpin = 16
-# LEDconnected_GPIOpin = 20
-# SERVO_GPIOpin = 21
-#
-# servoValueClosed = 2.5
-# servoValueOpen = 12.5
-#
-# if useLeds or useServos:
-#     import RPi.GPIO as GPIO
-#     GPIO.setmode(GPIO.BCM)
-#
-# if useLeds:
-#     GPIO.setup(LEDlecture_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
-#     GPIO.setup(LEDconnected_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
-#
-# def openLectureLed(doOpen):
-#     if doOpen:
-#         GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
-#     else:
-#         GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
-#
-# if useServos:
-#     GPIO.setup(SERVO_GPIOpin, GPIO.OUT)
-#     p = GPIO.PWM(SERVO_GPIOpin, 50)
-#     p.start(servoValueClosed)
-#
-# def openServo(doOpen):
-#     if doOpen:
-#         p.ChangeDutyCycle(servoValueOpen)
-#     else:
-#         p.ChangeDutyCycle(servoValueClosed)
-
-
-
 from firebase import firebase
-# import firebase_admin
-# from firebase_admin import credentials
-# from firebase_admin import db
-# import json
-# fb_url = 'https://teleconfetticannon-default-rtdb.firebaseio.com'
-# fb_dir = '/cannon/'
-# credentials_path = "/home/pi/myconfetticannon/teleconfetticannon-firebase-adminsdk-3ho19-01b30e179c.json"
 
+timeBetweenChecks = 5
+useLeds = True
+useServos = True
 
-# def connectFirebase():
-#     print('\n--- Will Try to Connect to Firebase ---')
-#     try:
-#         fb = firebase.FirebaseApplication(fb_url, authentication = None)
-#         cred = credentials.Certificate(credentials_path)
-#         firebase_admin.initialize_app(cred, {
-#             'databaseURL' : fb_url
-#         })
-#         root = db.reference()
-#     except:
-#         print('\n      NO INTERNET')
-#         return False
-#     else:
-#         if useLeds:
-#             GPIO.output(LEDconnected_GPIOpin,GPIO.HIGH)
-#         print('\n      SUCCESS !!!')
-#         return True
+LEDlecture_GPIOpin = 16
+LEDconnected_GPIOpin = 20
+LEDshoot_GPIOpin = 12
+SERVO_GPIOpin = 21
 
+servoValueClosed = 2.5
+servoValueOpen = 12.5
+
+fb_URL = "https://teleconfetticannon-default-rtdb.firebaseio.com/"
+
+if useLeds or useServos:
+    import RPi.GPIO as GPIO
+    GPIO.setmode(GPIO.BCM)
+
+if useLeds:
+    GPIO.setup(LEDlecture_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
+    GPIO.setup(LEDconnected_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
+    GPIO.setup(LEDshoot_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
+
+def openLectureLed(doOpen):
+    if doOpen:
+        GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
+    else:
+        GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
+
+if useServos:
+    GPIO.setup(SERVO_GPIOpin, GPIO.OUT)
+    p = GPIO.PWM(SERVO_GPIOpin, 50)
+    p.start(servoValueClosed)
+
+def openServo(doOpen):
+    if doOpen:
+        p.ChangeDutyCycle(servoValueOpen)
+    else:
+        p.ChangeDutyCycle(servoValueClosed)
+
+justShooted = False
+def shoot(doShoot):
+    if doShoot:
+        print('\n--- ¡¡¡ SHOOT !!! ---')
+        if useLeds:
+            GPIO.output(LEDshoot_GPIOpin,GPIO.HIGH)
+    else:
+        print('\n--- ... unshoot ... ---')
+        if useLeds:
+            GPIO.output(LEDshoot_GPIOpin,GPIO.LOW)
+    justShooted = doShoot
+    openServo(doShoot)
 
 def main():
-    # while not connectFirebase():
-    #     sleep(2)
-    lol = firebase.FirebaseApplication("https://teleconfetticannon-default-rtdb.firebaseio.com/", None)
+
+    #Connect to Firebase
+    connected = False
+    while not connected:
+        print('\n--- Will Try to Connect to Firebase ---')
+        try:
+            lol = firebase.FirebaseApplication(fb_URL, None)
+        except:
+            print('\n      NO INTERNET')
+        else:
+            print('\n      SUCCESS !!!')
+            if useLeds:
+                GPIO.output(LEDconnected_GPIOpin,GPIO.HIGH)
+            connected = True
+
+    #Endless Loop
     while True:
         print('\n--- NEW FIREBASE READING ---')
-        # openLectureLed(True)
+        if useLeds:
+            openLectureLed(True)
 
-        # ref = db.reference('/teleconfetticannon-default-rtdb'+fb_dir+'justshoot')
-        # print(ref.get())
+        #Read Firebase Values
+        justshoot = lol.get('/cannon/justshoot', '')
+        buttonison = lol.get('/cannon/buttonison', '')
+        dateison = lol.get('/cannon/dateison', '')
+        print("justshoot: "+justshoot+", buttonison: "+buttonison+", dateison: "+dateison)
 
-        # lol = db.child("cannon").order_by_child("justshoot").get()
-        # print(lol.key())
+        if justShooted:
+            shoot(False)
 
-        result = lol.get('/cannon/justshoot', '')
-        print(result)
+        #Check & Shoot
+        if justshoot=="True":
+            shoot(True)
+        # if buttonison=="True":
+        #     if GPIOdetectedINPUT:
+        #         shoot(True)
+        # if dateison=="True":
+        #     if nowIsLaterThanSuchDate:
+        #         shoot(True)
 
-        sleep(2)
-        # openLectureLed(False)
-        # sleep(5)
+        #Led Feedback
+        if useLeds:
+            sleep(timeBetweenChecks-1)
+            openLectureLed(False)
+            sleep(1)
+        else:
+            sleep(timeBetweenChecks)
 
 main()
 
@@ -95,7 +110,7 @@ main()
 
 
 
-
+    # SERVO EXAMPLES
     # GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
     # p.ChangeDutyCycle(5)
     # sleep(0.5)

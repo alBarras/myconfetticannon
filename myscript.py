@@ -71,7 +71,7 @@ from firebase import firebase
 def main():
     # while not connectFirebase():
     #     sleep(2)
-    firebase = firebase.FirebaseApplication('https://teleconfetticannon-default-rtdb.firebaseio.com', None)
+    lol = firebase.FirebaseApplication('https://teleconfetticannon-default-rtdb.firebaseio.com', None)
     while True:
         print('\n--- NEW FIREBASE READING ---')
         openLectureLed(True)
@@ -82,7 +82,7 @@ def main():
         # lol = db.child("cannon").order_by_child("justshoot").get()
         # print(lol.key())
 
-        result = firebase.get('/teleconfetticannon-default-rtdb/cannon/', 'justshoot')
+        result = lol.get('/teleconfetticannon-default-rtdb/cannon/', 'justshoot')
         print(result)
 
         sleep(2)

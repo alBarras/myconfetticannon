@@ -79,12 +79,10 @@ def main():
         root = db.reference()
     except:
         print('\n      NO INTERNET')
-        return False
     else:
         if useLeds:
             GPIO.output(LEDconnected_GPIOpin,GPIO.HIGH)
         print('\n      SUCCESS !!!')
-        return True
     # while not connectFirebase():
     #     sleep(2)
     while True:

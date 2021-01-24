@@ -51,7 +51,7 @@ credentials_path = "/home/pi/myconfetticannon/teleconfetticannon-firebase-admins
 def connectFirebase():
     try:
         fb = firebase.FirebaseApplication(fb_url, authentication = None)
-        cred = credentials.Certificate("/home/pi/mytransponder/mytransponder-ppl-firebase-adminsdk-c1kdd-fae40838ec.json")
+        cred = credentials.Certificate(credentials_path)
         firebase_admin.initialize_app(cred, {
             'databaseURL' : fb_url
         })

@@ -1,41 +1,41 @@
 print('TeleConfettiCannon Script Started!')
 from time import sleep
 
-timeBetweenChecks = 3
-useLeds = True
-useServos = True
-
-LEDlecture_GPIOpin = 16
-LEDconnected_GPIOpin = 20
-SERVO_GPIOpin = 21
-
-servoValueClosed = 2.5
-servoValueOpen = 12.5
-
-if useLeds or useServos:
-    import RPi.GPIO as GPIO
-    GPIO.setmode(GPIO.BCM)
-
-if useLeds:
-    GPIO.setup(LEDlecture_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
-    GPIO.setup(LEDconnected_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
-
-def openLectureLed(doOpen):
-    if doOpen:
-        GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
-    else:
-        GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
-
-if useServos:
-    GPIO.setup(SERVO_GPIOpin, GPIO.OUT)
-    p = GPIO.PWM(SERVO_GPIOpin, 50)
-    p.start(servoValueClosed)
-
-def openServo(doOpen):
-    if doOpen:
-        p.ChangeDutyCycle(servoValueOpen)
-    else:
-        p.ChangeDutyCycle(servoValueClosed)
+# timeBetweenChecks = 3
+# useLeds = True
+# useServos = True
+#
+# LEDlecture_GPIOpin = 16
+# LEDconnected_GPIOpin = 20
+# SERVO_GPIOpin = 21
+#
+# servoValueClosed = 2.5
+# servoValueOpen = 12.5
+#
+# if useLeds or useServos:
+#     import RPi.GPIO as GPIO
+#     GPIO.setmode(GPIO.BCM)
+#
+# if useLeds:
+#     GPIO.setup(LEDlecture_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
+#     GPIO.setup(LEDconnected_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
+#
+# def openLectureLed(doOpen):
+#     if doOpen:
+#         GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
+#     else:
+#         GPIO.output(LEDlecture_GPIOpin,GPIO.LOW)
+#
+# if useServos:
+#     GPIO.setup(SERVO_GPIOpin, GPIO.OUT)
+#     p = GPIO.PWM(SERVO_GPIOpin, 50)
+#     p.start(servoValueClosed)
+#
+# def openServo(doOpen):
+#     if doOpen:
+#         p.ChangeDutyCycle(servoValueOpen)
+#     else:
+#         p.ChangeDutyCycle(servoValueClosed)
 
 
 
@@ -74,7 +74,7 @@ def main():
     lol = firebase.FirebaseApplication("https://teleconfetticannon-default-rtdb.firebaseio.com/", None)
     while True:
         print('\n--- NEW FIREBASE READING ---')
-        openLectureLed(True)
+        # openLectureLed(True)
 
         # ref = db.reference('/teleconfetticannon-default-rtdb'+fb_dir+'justshoot')
         # print(ref.get())
@@ -82,12 +82,12 @@ def main():
         # lol = db.child("cannon").order_by_child("justshoot").get()
         # print(lol.key())
 
-        result = lol.get('/cannon', '')
+        result = lol.get('/cannon/justshoot', '')
         print(result)
 
         sleep(2)
-        openLectureLed(False)
-        sleep(5)
+        # openLectureLed(False)
+        # sleep(5)
 
 main()
 

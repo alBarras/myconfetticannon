@@ -69,29 +69,22 @@ def connectFirebase():
 
 
 def main():
-    print('\n--- Will Try to Connect to Firebase ---')
-    try:
-        fb = firebase.FirebaseApplication(fb_url, authentication = None)
-        cred = credentials.Certificate(credentials_path)
-        firebase_admin.initialize_app(cred, {
-            'databaseURL' : fb_url
-        })
-        root = db.reference()
-    except:
-        print('\n      NO INTERNET')
-    else:
-        if useLeds:
-            GPIO.output(LEDconnected_GPIOpin,GPIO.HIGH)
-        print('\n      SUCCESS !!!')
-    # while not connectFirebase():
-    #     sleep(2)
+    while not connectFirebase():
+        sleep(2)
     while True:
         print('\n--- NEW FIREBASE READING ---')
         openLectureLed(True)
+
         # ref = db.reference('/teleconfetticannon-default-rtdb'+fb_dir+'justshoot')
         # print(ref.get())
-        lol = db.child("cannon").order_by_child("justshoot").get()
-        print(lol.key())
+
+        # lol = db.child("cannon").order_by_child("justshoot").get()
+        # print(lol.key())
+
+        firebase = firebase.FirebaseApplication('https://teleconfetticannon-default-rtdb.firebaseio.com', None)
+        result = firebase.get('/teleconfetticannon-default-rtdb/cannon/', 'justshoot')
+        print(result)
+
         sleep(2)
         openLectureLed(False)
         sleep(5)

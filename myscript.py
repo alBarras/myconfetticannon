@@ -69,8 +69,24 @@ def connectFirebase():
 
 
 def main():
-    while not connectFirebase():
-        sleep(2)
+    print('\n--- Will Try to Connect to Firebase ---')
+    try:
+        fb = firebase.FirebaseApplication(fb_url, authentication = None)
+        cred = credentials.Certificate(credentials_path)
+        firebase_admin.initialize_app(cred, {
+            'databaseURL' : fb_url
+        })
+        root = db.reference()
+    except:
+        print('\n      NO INTERNET')
+        return False
+    else:
+        if useLeds:
+            GPIO.output(LEDconnected_GPIOpin,GPIO.HIGH)
+        print('\n      SUCCESS !!!')
+        return True
+    # while not connectFirebase():
+    #     sleep(2)
     while True:
         print('\n--- NEW FIREBASE READING ---')
         openLectureLed(True)

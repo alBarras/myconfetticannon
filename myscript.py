@@ -98,9 +98,9 @@ def main():
 
         #Led Feedback
         if useLeds:
-            sleep(timeBetweenChecks-1)
-            openLectureLed(False)
             sleep(1)
+            openLectureLed(False)
+            sleep(timeBetweenChecks-1)
         else:
             sleep(timeBetweenChecks)
 

@@ -82,7 +82,7 @@ def main():
         # lol = db.child("cannon").order_by_child("justshoot").get()
         # print(lol.key())
 
-        result = lol.get('/teleconfetticannon-default-rtdb/cannon/', 'justshoot')
+        result = lol.get('/teleconfetticannon-default-rtdb/cannon/justshoot/', '')
         print(result)
 
         sleep(2)

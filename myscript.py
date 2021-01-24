@@ -57,18 +57,21 @@ def connectFirebase():
         })
         root = db.reference()
     except:
-        print('\n--- Waiting for Internet ---')
+        print('\n      NO INTERNET')
         return False
     else:
         if useLeds:
             GPIO.output(LEDconnected_GPIOpin,GPIO.HIGH)
+        print('\n      SUCCESS !!!')
         return True
 
 
 def main():
     while not connectFirebase():
+        print('\n--- Will Try to Connect to Firebase ---')
         sleep(2)
     while True:
+        print('\n--- NEW FIREBASE READING ---')
         openLed(True)
         ref = db.reference(fb_url+fb_dir+'justshoot')
         print(ref.get())
@@ -76,7 +79,7 @@ def main():
         openLed(False)
         sleep(5)
 
-
+main()
 
 
 

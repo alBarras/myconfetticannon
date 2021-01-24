@@ -44,7 +44,7 @@ import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 fb_url = 'https://teleconfetticannon-default-rtdb.firebaseio.com'
-fb_dir = '/cannon1/'
+fb_dir = '/cannon/'
 credentials_path = "/home/pi/myconfetticannon/teleconfetticannon-firebase-adminsdk-3ho19-01b30e179c.json"
 
 

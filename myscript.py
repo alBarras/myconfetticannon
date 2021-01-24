@@ -45,7 +45,7 @@ def openServo(doOpen):
 justShooted = False
 def shoot(doShoot):
     if doShoot:
-        print('\n--- ¡¡¡ SHOOT !!! ---')
+        print('\n--- !!! SHOOT !!! ---')
         if useLeds:
             GPIO.output(LEDshoot_GPIOpin,GPIO.HIGH)
     else:

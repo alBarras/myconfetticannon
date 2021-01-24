@@ -42,7 +42,6 @@ def openServo(doOpen):
     else:
         p.ChangeDutyCycle(servoValueClosed)
 
-justShooted = False
 def shoot(doShoot):
     if doShoot:
         print('\n--- !!! SHOOT !!! ---')
@@ -52,7 +51,6 @@ def shoot(doShoot):
         print('\n--- ... unshoot ... ---')
         if useLeds:
             GPIO.output(LEDshoot_GPIOpin,GPIO.LOW)
-    justShooted = doShoot
     openServo(doShoot)
 
 def main():
@@ -82,9 +80,6 @@ def main():
         buttonison = lol.get('/cannon/buttonison', '')
         dateison = lol.get('/cannon/dateison', '')
         print("justshoot: "+justshoot+", buttonison: "+buttonison+", dateison: "+dateison)
-
-        if justShooted:
-            shoot(False)
 
         #Check & Shoot
         if justshoot=="True":

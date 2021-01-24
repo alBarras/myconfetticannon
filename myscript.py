@@ -20,7 +20,7 @@ if useLeds:
     GPIO.setup(LEDlecture_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
     GPIO.setup(LEDconnected_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
 
-def openLed(doOpen):
+def openLectureLed(doOpen):
     if doOpen:
         GPIO.output(LEDlecture_GPIOpin,GPIO.HIGH)
     else:
@@ -49,6 +49,7 @@ credentials_path = "/home/pi/myconfetticannon/teleconfetticannon-firebase-admins
 
 
 def connectFirebase():
+    print('\n--- Will Try to Connect to Firebase ---')
     try:
         fb = firebase.FirebaseApplication(fb_url, authentication = None)
         cred = credentials.Certificate(credentials_path)
@@ -68,15 +69,14 @@ def connectFirebase():
 
 def main():
     while not connectFirebase():
-        print('\n--- Will Try to Connect to Firebase ---')
         sleep(2)
     while True:
         print('\n--- NEW FIREBASE READING ---')
-        openLed(True)
-        ref = db.reference(fb_url+fb_dir+'justshoot')
+        openLectureLed(True)
+        ref = db.reference(fb_url+fb_dir+'justshoot/')
         print(ref.get())
         sleep(2)
-        openLed(False)
+        openLectureLed(False)
         sleep(5)
 
 main()

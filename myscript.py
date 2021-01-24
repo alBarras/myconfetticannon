@@ -40,37 +40,38 @@ def openServo(doOpen):
 
 
 from firebase import firebase
-import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import db
-import json
-fb_url = 'https://teleconfetticannon-default-rtdb.firebaseio.com'
-fb_dir = '/cannon/'
-credentials_path = "/home/pi/myconfetticannon/teleconfetticannon-firebase-adminsdk-3ho19-01b30e179c.json"
+# import firebase_admin
+# from firebase_admin import credentials
+# from firebase_admin import db
+# import json
+# fb_url = 'https://teleconfetticannon-default-rtdb.firebaseio.com'
+# fb_dir = '/cannon/'
+# credentials_path = "/home/pi/myconfetticannon/teleconfetticannon-firebase-adminsdk-3ho19-01b30e179c.json"
 
 
-def connectFirebase():
-    print('\n--- Will Try to Connect to Firebase ---')
-    try:
-        fb = firebase.FirebaseApplication(fb_url, authentication = None)
-        cred = credentials.Certificate(credentials_path)
-        firebase_admin.initialize_app(cred, {
-            'databaseURL' : fb_url
-        })
-        root = db.reference()
-    except:
-        print('\n      NO INTERNET')
-        return False
-    else:
-        if useLeds:
-            GPIO.output(LEDconnected_GPIOpin,GPIO.HIGH)
-        print('\n      SUCCESS !!!')
-        return True
+# def connectFirebase():
+#     print('\n--- Will Try to Connect to Firebase ---')
+#     try:
+#         fb = firebase.FirebaseApplication(fb_url, authentication = None)
+#         cred = credentials.Certificate(credentials_path)
+#         firebase_admin.initialize_app(cred, {
+#             'databaseURL' : fb_url
+#         })
+#         root = db.reference()
+#     except:
+#         print('\n      NO INTERNET')
+#         return False
+#     else:
+#         if useLeds:
+#             GPIO.output(LEDconnected_GPIOpin,GPIO.HIGH)
+#         print('\n      SUCCESS !!!')
+#         return True
 
 
 def main():
-    while not connectFirebase():
-        sleep(2)
+    # while not connectFirebase():
+    #     sleep(2)
+    firebase = firebase.FirebaseApplication('https://teleconfetticannon-default-rtdb.firebaseio.com', None)
     while True:
         print('\n--- NEW FIREBASE READING ---')
         openLectureLed(True)
@@ -81,7 +82,6 @@ def main():
         # lol = db.child("cannon").order_by_child("justshoot").get()
         # print(lol.key())
 
-        firebase = firebase.FirebaseApplication('https://teleconfetticannon-default-rtdb.firebaseio.com', None)
         result = firebase.get('/teleconfetticannon-default-rtdb/cannon/', 'justshoot')
         print(result)
 

@@ -12,7 +12,7 @@ LEDshoot_GPIOpin = 12
 SERVO_GPIOpin = 21
 
 servoValueClosed = 2.5
-servoValueOpen = 11
+servoValueOpen = 9
 
 afterShootTotalCount = 5
 

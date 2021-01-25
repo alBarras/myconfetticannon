@@ -63,7 +63,7 @@ def main():
         print('\n--- Will Try to Connect to Firebase ---')
         try:
             myfb = firebase.FirebaseApplication(fb_URL, None)
-            setShootToFalse = myfb.post('/cannon/justshoot',"False")
+            myfb.put('/cannon','justshoot',"False")
         except:
             print('\n      NO INTERNET')
         else:

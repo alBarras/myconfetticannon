@@ -14,6 +14,8 @@ SERVO_GPIOpin = 21
 servoValueClosed = 2.5
 servoValueOpen = 12.5
 
+afterShootTotalCount = 2
+
 fb_URL = "https://teleconfetticannon-default-rtdb.firebaseio.com/"
 
 if useLeds or useServos:
@@ -42,12 +44,17 @@ def openServo(doOpen):
     else:
         p.ChangeDutyCycle(servoValueClosed)
 
+justShooted = False
+afterShootCount = 0
 def shoot(doShoot):
     if doShoot:
+        justShooted = True
+        afterShootCount = 0
         print('\n--- !!! SHOOT !!! ---')
         if useLeds:
             GPIO.output(LEDshoot_GPIOpin,GPIO.HIGH)
     else:
+        justShooted = False
         print('\n--- ... unshoot ... ---')
         if useLeds:
             GPIO.output(LEDshoot_GPIOpin,GPIO.LOW)
@@ -75,21 +82,27 @@ def main():
         if useLeds:
             openLectureLed(True)
 
-        #Read Firebase Values
-        justshoot = lol.get('/cannon/justshoot', '')
-        buttonison = lol.get('/cannon/buttonison', '')
-        dateison = lol.get('/cannon/dateison', '')
-        print("justshoot: "+justshoot+", buttonison: "+buttonison+", dateison: "+dateison)
+        if not justShooted:
+            #Read Firebase Values
+            justshoot = lol.get('/cannon/justshoot', '')
+            buttonison = lol.get('/cannon/buttonison', '')
+            dateison = lol.get('/cannon/dateison', '')
+            print("justshoot: "+justshoot+", buttonison: "+buttonison+", dateison: "+dateison)
 
-        #Check & Shoot
-        if justshoot=="True":
-            shoot(True)
-        # if buttonison=="True":
-        #     if GPIOdetectedINPUT:
-        #         shoot(True)
-        # if dateison=="True":
-        #     if nowIsLaterThanSuchDate:
-        #         shoot(True)
+            #Check & Shoot
+            if justshoot=="True":
+                shoot(True)
+            # if buttonison=="True":
+            #     if GPIOdetectedINPUT:
+            #         shoot(True)
+            # if dateison=="True":
+            #     if nowIsLaterThanSuchDate:
+            #         shoot(True)
+        else:
+            afterShootCount = afterShootCount + 1
+            print("\n--- AFTER SHOOT WAIT ---")
+            if afterShootCount >= afterShootTotalCount-1:
+                shoot(False)
 
         #Led Feedback
         if useLeds:

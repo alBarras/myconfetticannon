@@ -48,13 +48,10 @@ justShooted = False
 afterShootCount = 0
 def shoot(doShoot):
     if doShoot:
-        justShooted = True
-        afterShootCount = 0
         print('\n--- !!! SHOOT !!! ---')
         if useLeds:
             GPIO.output(LEDshoot_GPIOpin,GPIO.HIGH)
     else:
-        justShooted = False
         print('\n--- ... unshoot ... ---')
         if useLeds:
             GPIO.output(LEDshoot_GPIOpin,GPIO.LOW)
@@ -67,7 +64,8 @@ def main():
     while not connected:
         print('\n--- Will Try to Connect to Firebase ---')
         try:
-            lol = firebase.FirebaseApplication(fb_URL, None)
+            myfb = firebase.FirebaseApplication(fb_URL, None)
+            setShootToFalse = myfb.post('/cannon/justshoot',"False")
         except:
             print('\n      NO INTERNET')
         else:
@@ -84,13 +82,15 @@ def main():
 
         if not justShooted:
             #Read Firebase Values
-            justshoot = lol.get('/cannon/justshoot', '')
-            buttonison = lol.get('/cannon/buttonison', '')
-            dateison = lol.get('/cannon/dateison', '')
+            justshoot = myfb.get('/cannon/justshoot', '')
+            buttonison = myfb.get('/cannon/buttonison', '')
+            dateison = myfb.get('/cannon/dateison', '')
             print("justshoot: "+justshoot+", buttonison: "+buttonison+", dateison: "+dateison)
 
             #Check & Shoot
             if justshoot=="True":
+                justShooted = True
+                afterShootCount = 0
                 shoot(True)
             # if buttonison=="True":
             #     if GPIOdetectedINPUT:
@@ -102,6 +102,8 @@ def main():
             afterShootCount = afterShootCount + 1
             print("\n--- AFTER SHOOT WAIT ---")
             if afterShootCount >= afterShootTotalCount-1:
+                justShooted = False
+                myfb.put('/cannon','justshoot',"False")
                 shoot(False)
 
         #Led Feedback

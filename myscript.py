@@ -2,7 +2,7 @@ print('TeleConfettiCannon Script Started!')
 from time import sleep
 from firebase import firebase
 
-timeBetweenChecks = 5
+timeBetweenChecks = 2
 useLeds = True
 useServos = True
 

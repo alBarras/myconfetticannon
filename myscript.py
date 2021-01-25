@@ -44,8 +44,6 @@ def openServo(doOpen):
     else:
         p.ChangeDutyCycle(servoValueClosed)
 
-justShooted = False
-afterShootCount = 0
 def shoot(doShoot):
     if doShoot:
         print('\n--- !!! SHOOT !!! ---')
@@ -75,6 +73,8 @@ def main():
             connected = True
 
     #Endless Loop
+    justShooted = False
+    afterShootCount = 0
     while True:
         print('\n--- NEW FIREBASE READING ---')
         if useLeds:

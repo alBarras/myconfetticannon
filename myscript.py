@@ -2,7 +2,7 @@ print('TeleConfettiCannon Script Started!')
 from time import sleep
 from firebase import firebase
 
-timeBetweenChecks = 2
+timeBetweenChecks = 1
 useLeds = True
 useServos = True
 
@@ -14,7 +14,7 @@ SERVO_GPIOpin = 21
 servoValueClosed = 2.5
 servoValueOpen = 12.5
 
-afterShootTotalCount = 2
+afterShootTotalCount = 5
 
 fb_URL = "https://teleconfetticannon-default-rtdb.firebaseio.com/"
 

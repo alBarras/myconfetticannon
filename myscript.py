@@ -61,7 +61,7 @@ def openServo(doOpen):
 def shoot(doShoot):
     if doShoot:
         print('\n--- !!! SHOOT !!! ---')
-        # myfb = firebase.FirebaseApplication(fb_URL, None)
+        myfb = firebase.FirebaseApplication(fb_URL, None)
         myfb.put('/cannon','justshoot',"True")
         myfb.put('/cannon','justshoot',"False")
         myfb.put('/cannon','dateison',"False")

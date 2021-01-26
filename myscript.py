@@ -1,15 +1,22 @@
 print('TeleConfettiCannon Script Started!')
 from time import sleep
 from firebase import firebase
+from datetime import datetime
+import pytz
+tz_Spain = pytz.timezone('Europe/Madrid')
 
 timeBetweenChecks = 1
 useLeds = True
 useServos = True
+useTrigger = True
 
 LEDlecture_GPIOpin = 16
 LEDconnected_GPIOpin = 20
 LEDshoot_GPIOpin = 12
+LEDdate_GPIOpin = 13
+LEDtrigger_GPIOpin = 6
 SERVO_GPIOpin = 21
+BUTTONtrigger_GPIOpin = 26
 
 servoValueClosed = 2.5
 servoValueOpen = 9
@@ -18,14 +25,21 @@ afterShootTotalCount = 5
 
 fb_URL = "https://teleconfetticannon-default-rtdb.firebaseio.com/"
 
-if useLeds or useServos:
+if useLeds or useServos or useTrigger:
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
+
+if useTrigger:
+    GPIO.setup(BUTTONtrigger_GPIOpin,GPIO.IN,pull_up_down = GPIO.PUD_DOWN)  #el posem a input mode
+        # GPIO.PUD_DOWN actiu si li arriben 3.3V, inactiu si li arriben <3.3V
+        # GPIO.PUD_UP inactiu si li arriben 3.3V, actiu si li arriben <3.3V
 
 if useLeds:
     GPIO.setup(LEDlecture_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
     GPIO.setup(LEDconnected_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
     GPIO.setup(LEDshoot_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
+    GPIO.setup(LEDdate_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
+    GPIO.setup(LEDtrigger_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
 
 def openLectureLed(doOpen):
     if doOpen:
@@ -47,6 +61,12 @@ def openServo(doOpen):
 def shoot(doShoot):
     if doShoot:
         print('\n--- !!! SHOOT !!! ---')
+        # myfb = firebase.FirebaseApplication(fb_URL, None)
+        myfb.put('/cannon','justshoot',"True")
+        myfb.put('/cannon','justshoot',"False")
+        myfb.put('/cannon','dateison',"False")
+        myfb.put('/cannon','tempison',"False")
+        myfb.put('/cannon','date',"")
         if useLeds:
             GPIO.output(LEDshoot_GPIOpin,GPIO.HIGH)
     else:
@@ -83,21 +103,35 @@ def main():
         if not justShooted:
             #Read Firebase Values
             justshoot = myfb.get('/cannon/justshoot', '')
-            buttonison = myfb.get('/cannon/buttonison', '')
+            triggerison = myfb.get('/cannon/triggerison', '')
+            tempison = myfb.get('/cannon/tempison', '')
             dateison = myfb.get('/cannon/dateison', '')
-            print("justshoot: "+justshoot+", buttonison: "+buttonison+", dateison: "+dateison)
+            date = myfb.get('/cannon/date', '')
+            print("justshoot: "+justshoot+", triggerison: "+triggerison+", tempison: "+tempison+", dateison: "+dateison+", date: "+date)
 
             #Check & Shoot
             if justshoot=="True":
                 justShooted = True
                 afterShootCount = 0
                 shoot(True)
-            # if buttonison=="True":
-            #     if GPIOdetectedINPUT:
-            #         shoot(True)
-            # if dateison=="True":
-            #     if nowIsLaterThanSuchDate:
-            #         shoot(True)
+
+            if triggerison=="True":
+                if useLeds:
+                    GPIO.output(LEDtrigger_GPIOpin,GPIO.HIGH)
+                if GPIO.input(BUTTONtrigger_GPIOpin):   #if button pressed, do shoot
+                    shoot(True)
+            elif useleds:
+                GPIO.output(LEDtrigger_GPIOpin,GPIO.LOW)
+
+            if dateison=="True" or tempison=="True":
+                if useLeds:
+                    GPIO.output(LEDdate_GPIOpin,GPIO.HIGH)
+                now = datetime.now(tz_Spain).strftime("%D %H:%M:%S")
+                if now >= date:
+                    shoot(True)
+            elif useleds:
+                GPIO.output(LEDdate_GPIOpin,GPIO.LOW)
+
         else:
             afterShootCount = afterShootCount + 1
             print("\n--- AFTER SHOOT WAIT ---")

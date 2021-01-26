@@ -6,6 +6,7 @@ import pytz
 tz_Spain = pytz.timezone('Europe/Madrid')
 
 timeBetweenChecks = 1
+timeAfterDateForShooting = 30;  #time after which the confetti will still be shooted, after such amount of seconds, we'll consider it a miss (the cannon was not turned on when it was time for shooting so it does not shoot)
 useLeds = True
 useServos = True
 useTrigger = True
@@ -75,6 +76,56 @@ def shoot(doShoot):
             GPIO.output(LEDshoot_GPIOpin,GPIO.LOW)
     openServo(doShoot)
 
+def getSdif(now, future):
+    month_future = int(future[0:2])
+    d_future = int(future[3:5])
+    y_future = int(future[6:8])
+    h_future = int(future[9:11])
+    m_future = int(future[12:14])
+    s_future = int(future[15:17])
+    month_now = int(now[0:2])
+    d_now = int(now[3:5])
+    y_now = int(now[6:8])
+    h_now = int(now[9:11])
+    m_now = int(now[12:14])
+    s_now = int(now[15:17])
+
+    s_dif = 0
+    if s_future-s_now>=0:
+        s_dif = s_dif + s_future-s_now
+    else:
+        s_dif = s_dif + s_future
+        s_dif = s_dif + 60-s_now
+        m_future = m_future - 1
+    if m_future-m_now>=0:
+        s_dif = s_dif + (m_future-m_now)*60
+    else:
+        s_dif = s_dif + m_future*60
+        s_dif = s_dif + (60-m_now)*60
+        h_future = h_future - 1
+    if h_future-h_now>=0:
+        s_dif = s_dif + (h_future-h_now)*60*60
+    else:
+        s_dif = s_dif + h_future*60*60
+        s_dif = s_dif + (24-h_now)*60*60
+        d_future = d_future - 1
+    if d_future-d_now>=0:
+        s_dif = s_dif + (d_future-d_now)*60*60*24
+    else:
+        s_dif = s_dif + d_future*60*60*24
+        s_dif = s_dif + (31-d_now)*60*60*24
+        month_future = month_future - 1
+    if month_future-month_now>=0:
+        s_dif = s_dif + (month_future-month_now)*60*60*24*30
+    else:
+        s_dif = s_dif + month_future*60*60*24*30
+        s_dif = s_dif + (13-month_now)*60*60*24*30
+        y_future = y_future - 1
+    if y_future-y_now>=0:
+        s_dif = s_dif + (y_future-y_now)*60*60*24*30*12
+
+    return s_dif
+
 def main():
 
     #Connect to Firebase
@@ -130,9 +181,15 @@ def main():
                 if useLeds:
                     GPIO.output(LEDdate_GPIOpin,GPIO.HIGH)
                 now = datetime.now(tz_Spain).strftime("%D %H:%M:%S")
-                if now >= date:
-                    justShooted = True
-                    shoot(True)
+                if now >= date: #if we have surpassed the shooting time
+                    if getSdif(date, date) <= timeAfterDateForShooting: #and we did not surpass it for too much time, shoot the confetti
+                        justShooted = True
+                        shoot(True)
+                    else:   #if it is too long after the shooting time, just abort the shooting date as we missed it
+                        myfb.put('/cannon','justshoot',"False")
+                        myfb.put('/cannon','dateison',"False")
+                        myfb.put('/cannon','tempison',"False")
+                        myfb.put('/cannon','date',"")
             elif useLeds:
                 GPIO.output(LEDdate_GPIOpin,GPIO.LOW)
 

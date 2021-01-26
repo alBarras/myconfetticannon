@@ -130,7 +130,7 @@ def main():
                 if useLeds:
                     GPIO.output(LEDdate_GPIOpin,GPIO.HIGH)
                 now = datetime.now(tz_Spain).strftime("%D %H:%M:%S")
-                if now >= date and :
+                if now >= date:
                     justShooted = True
                     shoot(True)
             elif useLeds:

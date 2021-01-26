@@ -183,7 +183,7 @@ def main():
                 now = datetime.now(tz_Spain).strftime("%D %H:%M:%S")
                 if now >= date: #if we have surpassed the shooting time
                     if getSdif(date, date) <= timeAfterDateForShooting: #and we did not surpass it for too much time, shoot the confetti
-                    print("\nShoot for Date, timeAfterDateForShooting: "+str(timeAfterDateForShooting))
+                        print("\nShoot for Date, timeAfterDateForShooting: "+str(timeAfterDateForShooting))
                         justShooted = True
                         shoot(True)
                     else:   #if it is too long after the shooting time, just abort the shooting date as we missed it

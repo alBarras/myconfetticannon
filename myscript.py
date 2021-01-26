@@ -6,7 +6,7 @@ import pytz
 tz_Spain = pytz.timezone('Europe/Madrid')
 
 timeBetweenChecks = 1
-timeAfterDateForShooting = 30;  #time after which the confetti will still be shooted, after such amount of seconds, we'll consider it a miss (the cannon was not turned on when it was time for shooting so it does not shoot)
+timeAfterDateForShooting = 60;  #time after which the confetti will still be shooted, after such amount of seconds, we'll consider it a miss (the cannon was not turned on when it was time for shooting so it does not shoot)
 useLeds = True
 useServos = True
 useTrigger = True
@@ -22,7 +22,7 @@ BUTTONtrigger_GPIOpin = 26
 servoValueClosed = 2.5
 servoValueOpen = 9
 
-afterShootTotalCount = 5
+afterShootTotalCount = 2
 
 fb_URL = "https://teleconfetticannon-default-rtdb.firebaseio.com/"
 

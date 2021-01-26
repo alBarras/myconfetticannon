@@ -120,7 +120,7 @@ def main():
                     GPIO.output(LEDtrigger_GPIOpin,GPIO.HIGH)
                 if GPIO.input(BUTTONtrigger_GPIOpin):   #if button pressed, do shoot
                     shoot(True)
-            elif useleds:
+            elif useLeds:
                 GPIO.output(LEDtrigger_GPIOpin,GPIO.LOW)
 
             if dateison=="True" or tempison=="True":
@@ -129,7 +129,7 @@ def main():
                 now = datetime.now(tz_Spain).strftime("%D %H:%M:%S")
                 if now >= date:
                     shoot(True)
-            elif useleds:
+            elif useLeds:
                 GPIO.output(LEDdate_GPIOpin,GPIO.LOW)
 
         else:

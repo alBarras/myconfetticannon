@@ -101,6 +101,8 @@ def main():
             openLectureLed(True)
 
         if not justShooted:
+            print("\n---START READING---")
+
             #Read Firebase Values
             justshoot = myfb.get('/cannon/justshoot', '')
             triggerison = myfb.get('/cannon/triggerison', '')
@@ -119,6 +121,7 @@ def main():
                 if useLeds:
                     GPIO.output(LEDtrigger_GPIOpin,GPIO.HIGH)
                 if GPIO.input(BUTTONtrigger_GPIOpin):   #if button pressed, do shoot
+                    justShooted = True
                     shoot(True)
             elif useLeds:
                 GPIO.output(LEDtrigger_GPIOpin,GPIO.LOW)
@@ -127,10 +130,13 @@ def main():
                 if useLeds:
                     GPIO.output(LEDdate_GPIOpin,GPIO.HIGH)
                 now = datetime.now(tz_Spain).strftime("%D %H:%M:%S")
-                if now >= date:
+                if now >= date and :
+                    justShooted = True
                     shoot(True)
             elif useLeds:
                 GPIO.output(LEDdate_GPIOpin,GPIO.LOW)
+
+            print("\n---END READING---")
 
         else:
             afterShootCount = afterShootCount + 1

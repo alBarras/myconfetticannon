@@ -163,11 +163,13 @@ def main():
             print("justshoot: "+justshoot+", triggerison: "+triggerison+", tempison: "+tempison+", dateison: "+dateison+", date: "+date)
 
             #Check & Shoot
+            print("\nCheck justShoot")
             if justshoot=="True":
                 justShooted = True
                 afterShootCount = 0
                 shoot(True)
 
+            print("\nCheck triggerIsOn")
             if triggerison=="True":
                 if useLeds:
                     GPIO.output(LEDtrigger_GPIOpin,GPIO.HIGH)
@@ -177,14 +179,15 @@ def main():
             elif useLeds:
                 GPIO.output(LEDtrigger_GPIOpin,GPIO.LOW)
 
+            print("\nCheck date/tempIsOn")
             if dateison=="True" or tempison=="True":
                 if useLeds:
                     GPIO.output(LEDdate_GPIOpin,GPIO.HIGH)
                 now = datetime.now(tz_Spain).strftime("%D %H:%M:%S")
                 if now >= date: #if we have surpassed the shooting time
                     s_dif_afterwards = getSdif(date, now)
+                    print("\ns_dif_afterwards: "+str(s_dif_afterwards))
                     if s_dif_afterwards <= timeAfterDateForShooting: #and we did not surpass it for too much time, shoot the confetti
-                        print("\nShoot for Date, s_dif_afterwards: "+str(s_dif_afterwards))
                         justShooted = True
                         shoot(True)
                     else:   #if it is too long after the shooting time, just abort the shooting date as we missed it

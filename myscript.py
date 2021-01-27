@@ -156,8 +156,20 @@ def main():
 
         if not justShooted:
 
+            print("\nCheck ledsIsOn")
+            ledsison = myfb.get('/cannon/ledsison', '')
+            if ledsison=="True":
+                if not useLeds:
+                    useLeds = True
+                    GPIO.output(LEDconnected_GPIOpin,GPIO.HIGH)
+                    if offlineTriggerIsOn:
+                        GPIO.output(LEDtrigger_GPIOpin,GPIO.HIGH)
+            else:
+                if useLeds:
+                    useLeds = False
+                    GPIO.output(LEDconnected_GPIOpin,GPIO.LOW)
+                    GPIO.output(LEDtrigger_GPIOpin,GPIO.LOW)
 
-            print("\n---FIRST CHECK OFFLINE BUTTON---")
             print("\nCheck triggerIsOn")
             triggerison = myfb.get('/cannon/triggerison', '')
             if triggerison=="True":

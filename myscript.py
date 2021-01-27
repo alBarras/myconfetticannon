@@ -62,14 +62,14 @@ def openServo(doOpen):
 def shoot(doShoot):
     if doShoot:
         print('\n--- !!! SHOOT !!! ---')
+        if useLeds:
+            GPIO.output(LEDshoot_GPIOpin,GPIO.HIGH)
         myfb = firebase.FirebaseApplication(fb_URL, None)
         myfb.put('/cannon','justshoot',"True")
         myfb.put('/cannon','justshoot',"False")
         myfb.put('/cannon','dateison',"False")
         myfb.put('/cannon','tempison',"False")
         myfb.put('/cannon','date',"")
-        if useLeds:
-            GPIO.output(LEDshoot_GPIOpin,GPIO.HIGH)
     else:
         print('\n--- ... unshoot ... ---')
         if useLeds:
@@ -150,6 +150,8 @@ def main():
         print('\n--- NEW FIREBASE READING ---')
         if useLeds:
             openLectureLed(True)
+            sleep(0.5)
+            openLectureLed(False)
 
         if not justShooted:
             print("\n---START READING---")
@@ -186,7 +188,7 @@ def main():
                 now = datetime.now(tz_Spain).strftime("%D %H:%M:%S")
                 if now >= date: #if we have surpassed the shooting time
                     s_dif_afterwards = getSdif(date, now)
-                    print("\ns_dif_afterwards: "+str(s_dif_afterwards))
+                    print("\ns_dif_afterwards: "+str(s_dif_afterwards)+", max is "+str(timeAfterDateForShooting))
                     if s_dif_afterwards <= timeAfterDateForShooting: #and we did not surpass it for too much time, shoot the confetti
                         justShooted = True
                         shoot(True)
@@ -208,13 +210,7 @@ def main():
                 myfb.put('/cannon','justshoot',"False")
                 shoot(False)
 
-        #Led Feedback
-        if useLeds:
-            sleep(1)
-            openLectureLed(False)
-            sleep(timeBetweenChecks-1)
-        else:
-            sleep(timeBetweenChecks)
+        sleep(timeBetweenChecks)
 
 main()
 

@@ -5,6 +5,7 @@ from datetime import datetime
 import pytz
 tz_Spain = pytz.timezone('Europe/Madrid')
 
+useLeds = True
 timeBetweenChecks = 1
 timeAfterDateForShooting = 60;  #time after which the confetti will still be shooted, after such amount of seconds, we'll consider it a miss (the cannon was not turned on when it was time for shooting so it does not shoot)
 useServos = True
@@ -129,7 +130,6 @@ def main():
 
     #Connect to Firebase
     connected = False
-    useLeds = True
     while not connected:
         print('\n--- Will Try to Connect to Firebase ---')
         try:

@@ -130,6 +130,7 @@ def main():
 
     #Connect to Firebase
     connected = False
+    useLeds = True
     while not connected:
         print('\n--- Will Try to Connect to Firebase ---')
         try:

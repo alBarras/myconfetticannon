@@ -158,17 +158,29 @@ def main():
 
 
             print("\n---FIRST CHECK OFFLINE BUTTON---")
+            print("\nCheck triggerIsOn")
+            triggerison = myfb.get('/cannon/triggerison', '')
+            if triggerison=="True":
+                if not offlineTriggerIsOn:
+                    offlineTriggerIsOn = True
+                    if useLeds:
+                        GPIO.output(LEDtrigger_GPIOpin,GPIO.HIGH)
+            else:
+                if offlineTriggerIsOn:
+                    offlineTriggerIsOn = False
+                    if useLeds:
+                        GPIO.output(LEDtrigger_GPIOpin,GPIO.LOW)
             if offlineTriggerIsOn and GPIO.input(BUTTONtrigger_GPIOpin):
                 justShooted = True
                 afterShootCount = 0
                 shoot(True)
+
             else:
 
                 print("\n---START READING---")
 
                 #Read Firebase Values
                 justshoot = myfb.get('/cannon/justshoot', '')
-                triggerison = myfb.get('/cannon/triggerison', '')
                 tempison = myfb.get('/cannon/tempison', '')
                 dateison = myfb.get('/cannon/dateison', '')
                 date = myfb.get('/cannon/date', '')
@@ -180,18 +192,6 @@ def main():
                     justShooted = True
                     afterShootCount = 0
                     shoot(True)
-
-                print("\nCheck triggerIsOn")
-                if triggerison=="True":
-                    if not offlineTriggerIsOn:
-                        offlineTriggerIsOn = True
-                        if useLeds:
-                            GPIO.output(LEDtrigger_GPIOpin,GPIO.HIGH)
-                else:
-                    if offlineTriggerIsOn:
-                        offlineTriggerIsOn = False
-                        if useLeds:
-                            GPIO.output(LEDtrigger_GPIOpin,GPIO.LOW)
 
                 print("\nCheck date/tempIsOn")
                 if dateison=="True" or tempison=="True":

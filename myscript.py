@@ -10,14 +10,17 @@ timeBetweenChecks = 1
 timeAfterDateForShooting = 60;  #time after which the confetti will still be shooted, after such amount of seconds, we'll consider it a miss (the cannon was not turned on when it was time for shooting so it does not shoot)
 useServos = True
 useTrigger = True
+useSensor = True
 
 LEDlecture_GPIOpin = 16
 LEDconnected_GPIOpin = 20
 LEDshoot_GPIOpin = 12
 LEDdate_GPIOpin = 13
 LEDtrigger_GPIOpin = 6
+LEDsensor_GPIOpin = 19
 SERVO_GPIOpin = 21
 BUTTONtrigger_GPIOpin = 26
+DETECTIONsensor_GPIOpin = 5
 
 servoValueClosed = 2.5
 servoValueOpen = 9
@@ -26,7 +29,7 @@ afterShootTotalCount = 2
 
 fb_URL = "https://teleconfetticannon-default-rtdb.firebaseio.com/"
 
-if useLeds or useServos or useTrigger:
+if useLeds or useServos or useTrigger or useSensor:
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
 
@@ -35,12 +38,16 @@ if useTrigger:
         # GPIO.PUD_DOWN actiu si li arriben 3.3V, inactiu si li arriben <3.3V
         # GPIO.PUD_UP inactiu si li arriben 3.3V, actiu si li arriben <3.3V
 
+if useSensor:
+    GPIO.setup(DETECTIONsensor_GPIOpin,GPIO.IN,pull_up_down = GPIO.PUD_DOWN)  #el posem a input mode
+
 if useLeds:
     GPIO.setup(LEDlecture_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
     GPIO.setup(LEDconnected_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
     GPIO.setup(LEDshoot_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
     GPIO.setup(LEDdate_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
     GPIO.setup(LEDtrigger_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
+    GPIO.setup(LEDsensor_GPIOpin,GPIO.OUT,initial=GPIO.LOW)
 
 def openLectureLed(doOpen):
     if doOpen:
@@ -148,6 +155,7 @@ def main():
     justShooted = False
     afterShootCount = 0
     offlineTriggerIsOn = False
+    offlineSensorIsOn = False
     while True:
         print('\n--- NEW CYCLE ---')
         if useLeds:
@@ -165,11 +173,14 @@ def main():
                     GPIO.output(LEDconnected_GPIOpin,GPIO.HIGH)
                     if offlineTriggerIsOn:
                         GPIO.output(LEDtrigger_GPIOpin,GPIO.HIGH)
+                    if offlineSensorIsOn:
+                        GPIO.output(LEDsensor_GPIOpin,GPIO.HIGH)
             else:
                 if useLeds:
                     useLeds = False
                     GPIO.output(LEDconnected_GPIOpin,GPIO.LOW)
                     GPIO.output(LEDtrigger_GPIOpin,GPIO.LOW)
+                    GPIO.output(LEDsensor_GPIOpin,GPIO.LOW)
 
             print("\nCheck triggerIsOn")
             triggerison = myfb.get('/cannon/triggerison', '')
@@ -190,43 +201,67 @@ def main():
 
             else:
 
-                print("\n---START READING---")
 
-                #Read Firebase Values
-                justshoot = myfb.get('/cannon/justshoot', '')
-                tempison = myfb.get('/cannon/tempison', '')
-                dateison = myfb.get('/cannon/dateison', '')
-                date = myfb.get('/cannon/date', '')
-                print("justshoot: "+justshoot+", triggerison: "+triggerison+", tempison: "+tempison+", dateison: "+dateison+", date: "+date)
-
-                #Check & Shoot
-                print("\nCheck justShoot")
-                if justshoot=="True":
+                print("\nCheck sensorIsOn")
+                sensorison = myfb.get('/cannon/sensorison', '')
+                if sensorison=="True":
+                    if not offlineSensorIsOn:
+                        offlineSensorIsOn = True
+                        if useLeds:
+                            GPIO.output(LEDsensor_GPIOpin,GPIO.HIGH)
+                else:
+                    if offlineSensorIsOn:
+                        offlineSensorIsOn = False
+                        if useLeds:
+                            GPIO.output(LEDsensor_GPIOpin,GPIO.LOW)
+                if offlineSensorIsOn and GPIO.input(DETECTIONsensor_GPIOpin):
                     justShooted = True
                     afterShootCount = 0
                     shoot(True)
 
-                print("\nCheck date/tempIsOn")
-                if dateison=="True" or tempison=="True":
-                    if useLeds:
-                        GPIO.output(LEDdate_GPIOpin,GPIO.HIGH)
-                    now = datetime.now(tz_Spain).strftime("%D %H:%M:%S")
-                    if now >= date: #if we have surpassed the shooting time
-                        s_dif_afterwards = getSdif(date, now)
-                        print("\ns_dif_afterwards: "+str(s_dif_afterwards)+", max is "+str(timeAfterDateForShooting))
-                        if s_dif_afterwards <= timeAfterDateForShooting: #and we did not surpass it for too much time, shoot the confetti
-                            justShooted = True
-                            afterShootCount = 0
-                            shoot(True)
-                        else:   #if it is too long after the shooting time, just abort the shooting date as we missed it
-                            myfb.put('/cannon','justshoot',"False")
-                            myfb.put('/cannon','dateison',"False")
-                            myfb.put('/cannon','tempison',"False")
-                            myfb.put('/cannon','date',"")
-                elif useLeds:
-                    GPIO.output(LEDdate_GPIOpin,GPIO.LOW)
 
-                print("\n---END READING---")
+                else:
+
+
+
+
+                    print("\n---START READING---")
+
+                    #Read Firebase Values
+                    justshoot = myfb.get('/cannon/justshoot', '')
+                    tempison = myfb.get('/cannon/tempison', '')
+                    dateison = myfb.get('/cannon/dateison', '')
+                    date = myfb.get('/cannon/date', '')
+                    print("justshoot: "+justshoot+", triggerison: "+triggerison+", tempison: "+tempison+", dateison: "+dateison+", date: "+date)
+
+                    #Check & Shoot
+                    print("\nCheck justShoot")
+                    if justshoot=="True":
+                        justShooted = True
+                        afterShootCount = 0
+                        shoot(True)
+
+                    print("\nCheck date/tempIsOn")
+                    if dateison=="True" or tempison=="True":
+                        if useLeds:
+                            GPIO.output(LEDdate_GPIOpin,GPIO.HIGH)
+                        now = datetime.now(tz_Spain).strftime("%D %H:%M:%S")
+                        if now >= date: #if we have surpassed the shooting time
+                            s_dif_afterwards = getSdif(date, now)
+                            print("\ns_dif_afterwards: "+str(s_dif_afterwards)+", max is "+str(timeAfterDateForShooting))
+                            if s_dif_afterwards <= timeAfterDateForShooting: #and we did not surpass it for too much time, shoot the confetti
+                                justShooted = True
+                                afterShootCount = 0
+                                shoot(True)
+                            else:   #if it is too long after the shooting time, just abort the shooting date as we missed it
+                                myfb.put('/cannon','justshoot',"False")
+                                myfb.put('/cannon','dateison',"False")
+                                myfb.put('/cannon','tempison',"False")
+                                myfb.put('/cannon','date',"")
+                    elif useLeds:
+                        GPIO.output(LEDdate_GPIOpin,GPIO.LOW)
+
+                    print("\n---END READING---")
 
         else:
             afterShootCount = afterShootCount + 1

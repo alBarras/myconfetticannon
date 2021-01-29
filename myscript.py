@@ -76,6 +76,7 @@ def shoot(doShoot):
         myfb.put('/cannon','justshoot',"False")
         myfb.put('/cannon','dateison',"False")
         myfb.put('/cannon','tempison',"False")
+        myfb.put('/cannon','sensorison',"False")
         myfb.put('/cannon','date',"")
     else:
         print('\n--- ... unshoot ... ---')
@@ -215,6 +216,7 @@ def main():
                         if useLeds:
                             GPIO.output(LEDsensor_GPIOpin,GPIO.LOW)
                 if offlineSensorIsOn and GPIO.input(DETECTIONsensor_GPIOpin):
+                    print("Movement detected! Will now shoot!")
                     justShooted = True
                     afterShootCount = 0
                     shoot(True)

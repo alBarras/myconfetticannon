@@ -157,6 +157,8 @@ def main():
     afterShootCount = 0
     offlineTriggerIsOn = False
     offlineSensorIsOn = False
+    sensorCounter = 0
+    sensorCounterPeak = 3
     while True:
         print('\n--- NEW CYCLE ---')
         if useLeds:
@@ -216,13 +218,17 @@ def main():
                         if useLeds:
                             GPIO.output(LEDsensor_GPIOpin,GPIO.LOW)
                 if offlineSensorIsOn and GPIO.input(DETECTIONsensor_GPIOpin):
-                    print("Movement detected! Will now shoot!")
-                    justShooted = True
-                    afterShootCount = 0
-                    shoot(True)
+                    sensorCounter = sensorCounter + 1
+                    print ("Movement Detected, "+sensorCounter+" of "+sensorCounterPeak)
+                    if sensorCounter >= sensorCounterPeak:
+                        print("As the sensor has detected movement "+sensorCounterPeak+" times, it will now shoot!")
+                        justShooted = True
+                        afterShootCount = 0
+                        shoot(True)
 
 
                 else:
+                    sensorCounter = 0
 
 
 

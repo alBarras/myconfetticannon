@@ -234,7 +234,7 @@ def main():
                     tempison = myfb.get('/cannon/tempison', '')
                     dateison = myfb.get('/cannon/dateison', '')
                     date = myfb.get('/cannon/date', '')
-                    print("justshoot: "+justshoot+", triggerison: "+triggerison+", tempison: "+tempison+", dateison: "+dateison+", date: "+date)
+                    print("justshoot: "+justshoot+", triggerison: "+triggerison+", sensorison: "+sensorison+", tempison: "+tempison+", dateison: "+dateison+", date: "+date)
 
                     #Check & Shoot
                     print("\nCheck justShoot")

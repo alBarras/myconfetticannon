@@ -219,9 +219,9 @@ def main():
                             GPIO.output(LEDsensor_GPIOpin,GPIO.LOW)
                 if offlineSensorIsOn and GPIO.input(DETECTIONsensor_GPIOpin):
                     sensorCounter = sensorCounter + 1
-                    print ("Movement Detected, "+sensorCounter+" of "+sensorCounterPeak)
+                    print ("Movement Detected, "+str(sensorCounter)+" of "+str(sensorCounterPeak)
                     if sensorCounter >= sensorCounterPeak:
-                        print("As the sensor has detected movement "+sensorCounterPeak+" times, it will now shoot!")
+                        print("As the sensor has detected movement "+str(sensorCounterPeak)+" times, it will now shoot!")
                         justShooted = True
                         afterShootCount = 0
                         shoot(True)

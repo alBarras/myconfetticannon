@@ -33,6 +33,9 @@ if useLeds or useServos or useTrigger or useSensor:
     import RPi.GPIO as GPIO
     GPIO.setmode(GPIO.BCM)
 
+#deleteme
+GPIO.setup(1,GPIO.OUT,initial=GPIO.HIGH)
+
 if useTrigger:
     GPIO.setup(BUTTONtrigger_GPIOpin,GPIO.IN,pull_up_down = GPIO.PUD_DOWN)  #el posem a input mode
         # GPIO.PUD_DOWN actiu si li arriben 3.3V, inactiu si li arriben <3.3V
@@ -219,7 +222,7 @@ def main():
                             GPIO.output(LEDsensor_GPIOpin,GPIO.LOW)
                 if offlineSensorIsOn and GPIO.input(DETECTIONsensor_GPIOpin):
                     sensorCounter = sensorCounter + 1
-                    print ("Movement Detected, "+str(sensorCounter)+" of "+str(sensorCounterPeak)
+                    print ("Movement Detected, "+str(sensorCounter)+" of "+str(sensorCounterPeak))
                     if sensorCounter >= sensorCounterPeak:
                         print("As the sensor has detected movement "+str(sensorCounterPeak)+" times, it will now shoot!")
                         justShooted = True

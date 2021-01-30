@@ -72,12 +72,12 @@ def shoot(doShoot):
         if useLeds:
             GPIO.output(LEDshoot_GPIOpin,GPIO.HIGH)
         myfb = firebase.FirebaseApplication(fb_URL, None)
-        myfb.put('/cannon','justshoot',"True")
-        myfb.put('/cannon','justshoot',"False")
-        myfb.put('/cannon','dateison',"False")
-        myfb.put('/cannon','tempison',"False")
-        myfb.put('/cannon','sensorison',"False")
-        myfb.put('/cannon','date',"")
+        myfb.put('/cannon_miki25','justshoot',"True")
+        myfb.put('/cannon_miki25','justshoot',"False")
+        myfb.put('/cannon_miki25','dateison',"False")
+        myfb.put('/cannon_miki25','tempison',"False")
+        myfb.put('/cannon_miki25','sensorison',"False")
+        myfb.put('/cannon_miki25','date',"")
     else:
         print('\n--- ... unshoot ... ---')
         if useLeds:
@@ -135,6 +135,7 @@ def getSdif(now, future):
     return s_dif
 
 def main():
+    lastLecture = True
 
     #Connect to Firebase
     connected = False
@@ -143,7 +144,7 @@ def main():
         print('\n--- Will Try to Connect to Firebase ---')
         try:
             myfb = firebase.FirebaseApplication(fb_URL, None)
-            myfb.put('/cannon','justshoot',"False")
+            myfb.put('/cannon_miki25','justshoot',"False")
         except:
             print('\n      NO INTERNET')
         else:
@@ -151,6 +152,8 @@ def main():
             if useLeds:
                 GPIO.output(LEDconnected_GPIOpin,GPIO.HIGH)
             connected = True
+            lastLecture = not lastLecture
+            myfb.put('/cannon_miki25','lastrasplecture',str(lastLecture))
 
     #Endless Loop
     justShooted = False
@@ -160,7 +163,10 @@ def main():
     sensorCounter = 0
     sensorCounterPeak = 3
     while True:
-        print('\n--- NEW CYCLE ---')
+        print('\n--- NEW LECTURE ---')
+        lastLecture = not lastLecture
+        myfb.put('/cannon_miki25','lastrasplecture',str(lastLecture))
+
         if useLeds:
             openLectureLed(True)
             sleep(0.5)
@@ -169,7 +175,7 @@ def main():
         if not justShooted:
 
             print("\nCheck ledsIsOn")
-            ledsison = myfb.get('/cannon/ledsison', '')
+            ledsison = myfb.get('/cannon_miki25/ledsison', '')
             if ledsison=="True":
                 if not useLeds:
                     useLeds = True
@@ -186,7 +192,7 @@ def main():
                     GPIO.output(LEDsensor_GPIOpin,GPIO.LOW)
 
             print("\nCheck triggerIsOn")
-            triggerison = myfb.get('/cannon/triggerison', '')
+            triggerison = myfb.get('/cannon_miki25/triggerison', '')
             if triggerison=="True":
                 if not offlineTriggerIsOn:
                     offlineTriggerIsOn = True
@@ -206,7 +212,7 @@ def main():
 
 
                 print("\nCheck sensorIsOn")
-                sensorison = myfb.get('/cannon/sensorison', '')
+                sensorison = myfb.get('/cannon_miki25/sensorison', '')
                 if sensorison=="True":
                     if not offlineSensorIsOn:
                         offlineSensorIsOn = True
@@ -236,10 +242,10 @@ def main():
                     print("\n---START READING---")
 
                     #Read Firebase Values
-                    justshoot = myfb.get('/cannon/justshoot', '')
-                    tempison = myfb.get('/cannon/tempison', '')
-                    dateison = myfb.get('/cannon/dateison', '')
-                    date = myfb.get('/cannon/date', '')
+                    justshoot = myfb.get('/cannon_miki25/justshoot', '')
+                    tempison = myfb.get('/cannon_miki25/tempison', '')
+                    dateison = myfb.get('/cannon_miki25/dateison', '')
+                    date = myfb.get('/cannon_miki25/date', '')
                     print("justshoot: "+justshoot+", triggerison: "+triggerison+", sensorison: "+sensorison+", tempison: "+tempison+", dateison: "+dateison+", date: "+date)
 
                     #Check & Shoot
@@ -262,10 +268,10 @@ def main():
                                 afterShootCount = 0
                                 shoot(True)
                             else:   #if it is too long after the shooting time, just abort the shooting date as we missed it
-                                myfb.put('/cannon','justshoot',"False")
-                                myfb.put('/cannon','dateison',"False")
-                                myfb.put('/cannon','tempison',"False")
-                                myfb.put('/cannon','date',"")
+                                myfb.put('/cannon_miki25','justshoot',"False")
+                                myfb.put('/cannon_miki25','dateison',"False")
+                                myfb.put('/cannon_miki25','tempison',"False")
+                                myfb.put('/cannon_miki25','date',"")
                     elif useLeds:
                         GPIO.output(LEDdate_GPIOpin,GPIO.LOW)
 
@@ -276,7 +282,7 @@ def main():
             print("\n--- AFTER SHOOT WAIT ---")
             if afterShootCount >= afterShootTotalCount-1:
                 justShooted = False
-                myfb.put('/cannon','justshoot',"False")
+                myfb.put('/cannon_miki25','justshoot',"False")
                 shoot(False)
 
         sleep(timeBetweenChecks)

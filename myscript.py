@@ -161,7 +161,7 @@ def main():
     offlineTriggerIsOn = False
     offlineSensorIsOn = False
     sensorCounter = 0
-    sensorCounterPeak = 2
+    sensorCounterPeak = 1
     while True:
         print('\n--- NEW LECTURE ---')
         lastLecture = not lastLecture

@@ -1,4 +1,4 @@
-print('TeleConfettiCannon Script Started!')
+print('TeleConfettiCannon Script Started! :)')
 from time import sleep
 from firebase import firebase
 from datetime import datetime
